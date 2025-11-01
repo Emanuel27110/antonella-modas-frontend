@@ -1,0 +1,554 @@
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+/* Grid de Resumen de Caja */
+.caja-resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 28px;
+  margin-bottom: 44px;
+}
+
+.caja-card {
+  background-color: var(--color-blanco);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--color-gris);
+}
+
+.caja-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.caja-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.caja-card:hover::before {
+  width: 10px;
+}
+
+.card-general::before {
+  background: linear-gradient(180deg, var(--color-verde) 0%, var(--color-verde-oscuro) 100%);
+}
+
+.card-dia::before {
+  background: linear-gradient(180deg, var(--color-marron-claro) 0%, var(--color-marron-oscuro) 100%);
+}
+
+.card-semana::before {
+  background: linear-gradient(180deg, var(--color-verde-oscuro) 0%, var(--color-verde) 100%);
+}
+
+.card-mes::before {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+}
+
+.caja-card-icon {
+  font-size: 56px;
+  flex-shrink: 0;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.caja-card-content {
+  flex: 1;
+}
+
+.caja-card-content h3 {
+  font-size: 13px;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 10px;
+}
+
+.caja-card-valor {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--color-negro);
+  margin: 0 0 6px;
+  letter-spacing: -1px;
+}
+
+.caja-card-detalle {
+  font-size: 14px;
+  color: #999;
+  font-weight: 600;
+}
+
+/* Secciones */
+.caja-seccion {
+  background-color: var(--color-blanco);
+  border-radius: 16px;
+  padding: 36px;
+  margin-bottom: 36px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 2px solid var(--color-gris);
+}
+
+.caja-seccion h2 {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--color-negro);
+  margin: 0 0 28px;
+  letter-spacing: -0.5px;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--color-verde);
+}
+
+.seccion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.seccion-header h2 {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Métodos de Pago */
+.metodos-pago-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 24px;
+}
+
+.metodo-card {
+  background-color: var(--color-gris-claro);
+  border-radius: 14px;
+  padding: 24px;
+  border: 2px solid var(--color-gris);
+  transition: all 0.3s ease;
+}
+
+.metodo-card:hover {
+  border-color: var(--color-verde);
+  box-shadow: 0 6px 20px rgba(107, 142, 35, 0.15);
+  background-color: var(--color-blanco);
+  transform: translateY(-4px);
+}
+
+.metodo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.metodo-nombre {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-negro);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.metodo-cantidad {
+  font-size: 13px;
+  color: #666;
+  background-color: var(--color-blanco);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  border: 1px solid var(--color-gris);
+}
+
+.metodo-monto {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--color-verde);
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+
+.metodo-barra {
+  width: 100%;
+  height: 10px;
+  background-color: var(--color-gris);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.metodo-barra-progreso {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-verde) 0%, var(--color-marron-claro) 100%);
+  transition: width 0.6s ease;
+  border-radius: 6px;
+}
+
+.metodo-porcentaje {
+  font-size: 14px;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Top Productos */
+.top-productos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.top-producto-item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background-color: var(--color-gris-claro);
+  border-radius: 14px;
+  border-left: 6px solid var(--color-verde);
+  transition: all 0.3s ease;
+  border: 2px solid var(--color-gris);
+  border-left: 6px solid var(--color-verde);
+}
+
+.top-producto-item:hover {
+  background-color: var(--color-blanco);
+  transform: translateX(8px);
+  box-shadow: 0 6px 20px rgba(107, 142, 35, 0.15);
+}
+
+.top-producto-ranking {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--color-verde);
+  min-width: 60px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.top-producto-info {
+  flex: 1;
+}
+
+.top-producto-info h4 {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--color-negro);
+  margin: 0 0 6px;
+  letter-spacing: -0.3px;
+}
+
+.top-producto-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  font-weight: 600;
+}
+
+.top-producto-info strong {
+  color: var(--color-negro);
+  font-weight: 900;
+}
+
+.top-producto-ingreso {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--color-marron-claro);
+  letter-spacing: -0.5px;
+}
+
+/* Tabs de Período */
+.periodo-tabs {
+  display: flex;
+  gap: 10px;
+  background-color: var(--color-gris-claro);
+  padding: 6px;
+  border-radius: 12px;
+  border: 2px solid var(--color-gris);
+}
+
+.tab {
+  padding: 12px 24px;
+  border: none;
+  background-color: transparent;
+  color: #666;
+  font-weight: 800;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+}
+
+.tab:hover {
+  background-color: var(--color-gris);
+  color: var(--color-negro);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--color-verde) 0%, var(--color-marron-claro) 100%);
+  color: var(--color-blanco);
+  box-shadow: 0 4px 12px rgba(107, 142, 35, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Ventas Recientes */
+.ventas-recientes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.venta-reciente-item {
+  display: grid;
+  grid-template-columns: 150px 1fr auto auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--color-gris-claro);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.venta-reciente-item:hover {
+  background-color: var(--color-blanco);
+  transform: translateX(6px);
+  border-color: var(--color-verde);
+  box-shadow: 0 4px 12px rgba(107, 142, 35, 0.12);
+}
+
+.venta-reciente-fecha {
+  font-size: 13px;
+  color: #666;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.venta-reciente-productos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.producto-tag {
+  font-size: 13px;
+  background-color: var(--color-blanco);
+  color: var(--color-negro);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 2px solid var(--color-gris);
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.producto-tag:hover {
+  border-color: var(--color-verde);
+  background-color: var(--color-verde);
+  color: var(--color-blanco);
+}
+
+.venta-reciente-metodo {
+  font-size: 13px;
+  color: #666;
+  background-color: var(--color-blanco);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 800;
+  border: 2px solid var(--color-gris);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.venta-reciente-total {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--color-verde);
+  min-width: 130px;
+  text-align: right;
+  letter-spacing: -0.5px;
+}
+
+.empty-state-small {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.texto-vacio {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.ver-todas-link {
+  margin-top: 24px;
+  text-align: center;
+  padding-top: 24px;
+  border-top: 2px solid var(--color-gris);
+}
+
+.ver-todas-link a {
+  color: var(--color-verde);
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ver-todas-link a:hover {
+  color: var(--color-marron-claro);
+  text-decoration: underline;
+  transform: translateX(4px);
+  display: inline-block;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .venta-reciente-item {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .venta-reciente-total {
+    text-align: left;
+  }
+
+  .top-producto-item {
+    gap: 18px;
+  }
+
+  .top-producto-ranking {
+    font-size: 32px;
+    min-width: 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .caja-resumen-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .caja-card {
+    padding: 24px;
+  }
+
+  .caja-card-icon {
+    font-size: 48px;
+  }
+
+  .caja-card-valor {
+    font-size: 26px;
+  }
+
+  .caja-seccion {
+    padding: 24px;
+  }
+
+  .caja-seccion h2 {
+    font-size: 20px;
+  }
+
+  .seccion-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .periodo-tabs {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .metodos-pago-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metodo-card {
+    padding: 20px;
+  }
+
+  .metodo-monto {
+    font-size: 24px;
+  }
+
+  .top-productos-lista {
+    gap: 16px;
+  }
+
+  .top-producto-item {
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .top-producto-ranking {
+    font-size: 28px;
+    min-width: 45px;
+  }
+
+  .top-producto-info h4 {
+    font-size: 17px;
+  }
+
+  .top-producto-ingreso {
+    width: 100%;
+    text-align: left;
+    font-size: 22px;
+  }
+
+  .venta-reciente-item {
+    padding: 16px;
+  }
+
+  .venta-reciente-fecha {
+    font-size: 12px;
+  }
+
+  .producto-tag {
+    font-size: 12px;
+    padding: 5px 12px;
+  }
+
+  .venta-reciente-metodo {
+    font-size: 12px;
+    padding: 7px 14px;
+  }
+
+  .venta-reciente-total {
+    font-size: 18px;
+  }
+}

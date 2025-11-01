@@ -1,0 +1,23 @@
+/* Paleta de Colores - Antonella Modas */
+:root {
+  /* Colores principales */
+  --color-blanco: #FFFFFF;
+  --color-negro: #1a1a1a;
+  --color-marron-claro: #D4A574;
+  --color-verde: #6B8E23;
+  
+  /* Variaciones */
+  --color-marron-oscuro: #A67C52;
+  --color-verde-oscuro: #556B2F;
+  --color-gris-claro: #F5F5F5;
+  --color-gris: #E0E0E0;
+  
+  /* Gradientes */
+  --gradiente-principal: linear-gradient(135deg, var(--color-verde) 0%, var(--color-marron-claro) 100%);
+  --gradiente-footer: linear-gradient(180deg, var(--color-negro) 0%, #2a2a2a 100%);
+  
+  /* Sombras */
+  --sombra-suave: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --sombra-fuerte: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
