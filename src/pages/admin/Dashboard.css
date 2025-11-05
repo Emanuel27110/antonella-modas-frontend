@@ -426,3 +426,91 @@
     font-size: 22px;
   }
 }
+/* 🆕 AGREGAR AL FINAL DE TU Dashboard.css EXISTENTE */
+
+/* Alerta de pedidos pendientes */
+.alerta-pedidos {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-left: 4px solid #ffc107;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(255, 193, 7, 0.2);
+}
+
+.alerta-pedidos h3 {
+  margin: 0 0 0.5rem 0;
+  color: #856404;
+  font-size: 1.2rem;
+}
+
+.alerta-pedidos p {
+  margin: 0 0 1rem 0;
+  color: #856404;
+}
+
+.btn-ver-pedidos {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #ffc107;
+  color: #000;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-ver-pedidos:hover {
+  background: #ffb300;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Tarjeta de pedidos online con badge */
+.menu-card.menu-nuevo {
+  position: relative;
+  border: 2px solid var(--color-verde);
+}
+
+.menu-card.menu-nuevo::after {
+  content: 'NUEVO';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: var(--color-verde);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.badge-notificacion {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #dc3545;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(220, 53, 69, 0.6);
+  }
+}

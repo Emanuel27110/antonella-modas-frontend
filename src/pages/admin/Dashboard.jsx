@@ -4,7 +4,8 @@ import { AuthContext } from '../../context/AuthContext';
 import { 
   getProductosStockBajo, 
   getResumenCaja,
-  getProductosAdmin 
+  getProductosAdmin,
+  getEstadisticasPedidos // 🆕 NUEVO
 } from '../../services/api';
 import './Dashboard.css';
 
@@ -15,6 +16,7 @@ const Dashboard = () => {
   const [productosStockBajo, setProductosStockBajo] = useState([]);
   const [resumenCaja, setResumenCaja] = useState(null);
   const [totalProductos, setTotalProductos] = useState(0);
+  const [estadisticasPedidos, setEstadisticasPedidos] = useState(null); // 🆕 NUEVO
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
@@ -23,15 +25,17 @@ const Dashboard = () => {
 
   const cargarDatos = async () => {
     try {
-      const [stockBajoRes, cajaRes, productosRes] = await Promise.all([
+      const [stockBajoRes, cajaRes, productosRes, pedidosRes] = await Promise.all([
         getProductosStockBajo(),
         getResumenCaja(),
-        getProductosAdmin()
+        getProductosAdmin(),
+        getEstadisticasPedidos() // 🆕 NUEVO
       ]);
 
       setProductosStockBajo(stockBajoRes.data.productos || []);
       setResumenCaja(cajaRes.data);
       setTotalProductos(productosRes.data.length);
+      setEstadisticasPedidos(pedidosRes.data); // 🆕 NUEVO
     } catch (error) {
       console.error('Error al cargar datos:', error);
     } finally {
@@ -115,6 +119,17 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* 🆕 NUEVA: Alerta de pedidos pendientes */}
+        {estadisticasPedidos && estadisticasPedidos.pendientes > 0 && (
+          <div className="alerta-pedidos">
+            <h3>🛒 Pedidos Online Pendientes</h3>
+            <p>Tienes <strong>{estadisticasPedidos.pendientes}</strong> pedidos esperando confirmación.</p>
+            <Link to="/admin/pedidos-online" className="btn-ver-pedidos">
+              Ver Pedidos →
+            </Link>
+          </div>
+        )}
+
         {/* Alerta de stock bajo */}
         {productosStockBajo.length > 0 && (
           <div className="alerta-stock">
@@ -164,13 +179,23 @@ const Dashboard = () => {
           <Link to="/admin/venta" className="menu-card menu-destacado">
             <div className="menu-icon">💵</div>
             <h3>Registrar Venta</h3>
-            <p>Nueva venta (descuenta stock)</p>
+            <p>Nueva venta presencial</p>
           </Link>
 
           <Link to="/admin/historial-ventas" className="menu-card">
             <div className="menu-icon">📋</div>
             <h3>Historial de Ventas</h3>
-            <p>Ver todas las ventas realizadas</p>
+            <p>Ver ventas presenciales</p>
+          </Link>
+
+          {/* 🆕 NUEVO: Pedidos Online */}
+          <Link to="/admin/pedidos-online" className="menu-card menu-nuevo">
+            <div className="menu-icon">🛒</div>
+            <h3>Pedidos Online</h3>
+            <p>Gestionar pedidos del sitio web</p>
+            {estadisticasPedidos?.pendientes > 0 && (
+              <span className="badge-notificacion">{estadisticasPedidos.pendientes}</span>
+            )}
           </Link>
 
           <Link to="/admin/caja" className="menu-card">

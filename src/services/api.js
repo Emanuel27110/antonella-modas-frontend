@@ -14,7 +14,6 @@ const api = axios.create({
 // Interceptor para agregar el token automáticamente
 api.interceptors.request.use(
   (config) => {
-    // 🔧 ARREGLO: Buscar en sessionStorage en lugar de localStorage
     const token = sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -53,13 +52,22 @@ export const actualizarStock = (id, stock) => api.patch(`/productos/${id}/stock`
 export const eliminarProducto = (id) => api.delete(`/productos/${id}`);
 export const cambiarVisibilidad = (id) => api.patch(`/productos/${id}/visibilidad`);
 
-// ========== VENTAS ==========
+// ========== VENTAS (Presenciales) ==========
 export const getVentas = () => api.get('/ventas');
 export const getVenta = (id) => api.get(`/ventas/${id}`);
 export const crearVenta = (data) => api.post('/ventas', data);
 export const eliminarVenta = (id) => api.delete(`/ventas/${id}`);
 export const getEstadisticas = () => api.get('/ventas/estadisticas');
 export const getVentasPorPeriodo = (inicio, fin) => api.get(`/ventas/estadisticas/periodo?inicio=${inicio}&fin=${fin}`);
+
+// ========== PEDIDOS (Online) ========== 🆕 NUEVO
+export const crearPedido = (data) => api.post('/pedidos', data);
+export const getPedidos = (params) => api.get('/pedidos', { params });
+export const getPedido = (id) => api.get(`/pedidos/${id}`);
+export const actualizarEstadoPedido = (id, data) => api.patch(`/pedidos/${id}/estado`, data);
+export const actualizarEstadoPago = (id, data) => api.patch(`/pedidos/${id}/pago`, data);
+export const eliminarPedido = (id) => api.delete(`/pedidos/${id}`);
+export const getEstadisticasPedidos = () => api.get('/pedidos/estadisticas');
 
 // ========== CAJA ==========
 export const getResumenCaja = () => api.get('/caja/resumen');

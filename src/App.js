@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Categoria from './pages/Categoria';
 import Login from './pages/Login';
+import Checkout from './pages/Checkout'; // 🆕 NUEVO
 
 // Páginas admin
 import Dashboard from './pages/admin/Dashboard';
@@ -14,6 +15,7 @@ import Productos from './pages/admin/Productos';
 import RegistrarVenta from './pages/admin/RegistrarVenta';
 import HistorialVentas from './pages/admin/HistorialVentas';
 import Caja from './pages/admin/Caja';
+import PedidosOnline from './pages/admin/PedidosOnline'; // 🆕 NUEVO
 
 import './App.css';
 
@@ -26,6 +28,7 @@ function App() {
             {/* Rutas públicas */}
             <Route path="/" element={<Home />} />
             <Route path="/categoria/:id" element={<Categoria />} />
+            <Route path="/checkout" element={<Checkout />} /> {/* 🆕 NUEVO */}
             <Route path="/login" element={<Login />} />
 
             {/* Rutas protegidas (admin) */}
@@ -66,6 +69,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <HistorialVentas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pedidos-online" /* 🆕 NUEVO */
+              element={
+                <ProtectedRoute>
+                  <PedidosOnline />
                 </ProtectedRoute>
               }
             />

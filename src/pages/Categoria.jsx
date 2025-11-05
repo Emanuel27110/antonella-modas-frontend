@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProductosPorCategoria, getCategoria } from '../services/api';
 import './Categoria.css';
 
 const Categoria = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [categoria, setCategoria] = useState(null);
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
 
   useEffect(() => {
     cargarDatos();
@@ -34,6 +36,18 @@ const Categoria = () => {
       currency: 'ARS',
       minimumFractionDigits: 0
     }).format(precio);
+  };
+
+  const handleComprar = (producto) => {
+    navigate('/checkout', { state: { producto } });
+  };
+
+  const abrirImagen = (imagen) => {
+    setImagenAmpliada(imagen);
+  };
+
+  const cerrarImagen = () => {
+    setImagenAmpliada(null);
   };
 
   if (cargando) {
@@ -66,13 +80,22 @@ const Categoria = () => {
           <div className="productos-grid">
             {productos.map((producto) => (
               <div key={producto._id} className="producto-card">
-                <div className="producto-imagen-container">
+                <div 
+                  className="producto-imagen-container"
+                  onClick={() => producto.imagen && abrirImagen(producto.imagen)}
+                  style={{ cursor: producto.imagen ? 'pointer' : 'default' }}
+                >
                   {producto.imagen ? (
-                    <img
-                      src={producto.imagen}
-                      alt={producto.nombre}
-                      className="producto-imagen"
-                    />
+                    <>
+                      <img
+                        src={producto.imagen}
+                        alt={producto.nombre}
+                        className="producto-imagen"
+                      />
+                      <div className="imagen-overlay">
+                        <span className="ver-imagen-text">🔍 Ver imagen</span>
+                      </div>
+                    </>
                   ) : (
                     <div className="producto-sin-imagen">
                       📷 Sin imagen
@@ -103,12 +126,36 @@ const Categoria = () => {
                       </div>
                     </div>
                   )}
+
+                  <button 
+                    className="btn-comprar"
+                    onClick={() => handleComprar(producto)}
+                  >
+                    🛒 Comprar
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Modal para imagen ampliada */}
+      {imagenAmpliada && (
+        <div className="modal-imagen-overlay" onClick={cerrarImagen}>
+          <div className="modal-imagen-container">
+            <button className="btn-cerrar-imagen" onClick={cerrarImagen}>
+              ✕
+            </button>
+            <img 
+              src={imagenAmpliada} 
+              alt="Producto ampliado" 
+              className="imagen-ampliada"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
