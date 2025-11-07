@@ -12,12 +12,17 @@ const HistorialVentas = () => {
   const [ventaDetalle, setVentaDetalle] = useState(null);
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
 
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const ventasPorPagina = 12;
+
   useEffect(() => {
     cargarVentas();
   }, []);
 
   useEffect(() => {
     filtrarVentas();
+    setPaginaActual(1);
   }, [ventas, filtroMetodo, busqueda]);
 
   const cargarVentas = async () => {
@@ -40,12 +45,10 @@ const HistorialVentas = () => {
   const filtrarVentas = () => {
     let filtradas = [...ventas];
 
-    // Filtrar por método de pago
     if (filtroMetodo !== 'todos') {
       filtradas = filtradas.filter(v => v.metodoPago === filtroMetodo);
     }
 
-    // Filtrar por búsqueda
     if (busqueda.trim() !== '') {
       filtradas = filtradas.filter(v => 
         v.cliente?.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -55,6 +58,17 @@ const HistorialVentas = () => {
     }
 
     setVentasFiltradas(filtradas);
+  };
+
+  // Calcular ventas de la página actual
+  const indiceUltimo = paginaActual * ventasPorPagina;
+  const indicePrimero = indiceUltimo - ventasPorPagina;
+  const ventasActuales = ventasFiltradas.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(ventasFiltradas.length / ventasPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const verDetalle = (venta) => {
@@ -125,7 +139,7 @@ const HistorialVentas = () => {
             <Link to="/admin/dashboard" className="btn-volver">
               ← Dashboard
             </Link>
-                      <h1>📋 Historial de Ventas</h1>
+            <h1>📋 Historial de Ventas</h1>
             <Link to="/admin/venta" className="btn-primary">
               + Nueva Venta
             </Link>
@@ -180,6 +194,12 @@ const HistorialVentas = () => {
             <span className="resumen-label">Total recaudado:</span>
             <span className="resumen-valor">{formatearPrecio(calcularTotalVentas())}</span>
           </div>
+          {ventasFiltradas.length > ventasPorPagina && (
+            <div className="resumen-card">
+              <span className="resumen-label">Página:</span>
+              <span className="resumen-valor">{paginaActual} / {totalPaginas}</span>
+            </div>
+          )}
         </div>
 
         {/* Lista de ventas */}
@@ -191,46 +211,97 @@ const HistorialVentas = () => {
             </Link>
           </div>
         ) : (
-          <div className="ventas-grid">
-            {ventasFiltradas.map((venta) => (
-              <div key={venta._id} className="venta-card" onClick={() => verDetalle(venta)}>
-                <div className="venta-card-header">
-                  <span className="venta-fecha">{formatearFecha(venta.createdAt)}</span>
-                  <span className="venta-metodo">{getMetodoPagoTexto(venta.metodoPago)}</span>
-                </div>
-
-                <div className="venta-card-body">
-                  <div className="venta-productos-resumen">
-                    {venta.productos.map((item, index) => (
-                      <div key={index} className="producto-resumen-item">
-                        <span>{item.nombreProducto}</span>
-                        <span className="cantidad-badge">x{item.cantidad}</span>
-                      </div>
-                    ))}
+          <>
+            <div className="ventas-grid">
+              {ventasActuales.map((venta) => (
+                <div key={venta._id} className="venta-card" onClick={() => verDetalle(venta)}>
+                  <div className="venta-card-header">
+                    <span className="venta-fecha">{formatearFecha(venta.createdAt)}</span>
+                    <span className="venta-metodo">{getMetodoPagoTexto(venta.metodoPago)}</span>
                   </div>
 
-                  {venta.cliente?.nombre && (
-                    <div className="venta-cliente">
-                      <strong>Cliente:</strong> {venta.cliente.nombre}
+                  <div className="venta-card-body">
+                    <div className="venta-productos-resumen">
+                      {venta.productos.map((item, index) => (
+                        <div key={index} className="producto-resumen-item">
+                          <span>{item.nombreProducto}</span>
+                          <span className="cantidad-badge">x{item.cantidad}</span>
+                        </div>
+                      ))}
                     </div>
-                  )}
 
-                  <div className="venta-vendedor">
-                    <strong>Vendedor:</strong> {venta.vendedor?.nombre}
+                    {venta.cliente?.nombre && (
+                      <div className="venta-cliente">
+                        <strong>Cliente:</strong> {venta.cliente.nombre}
+                      </div>
+                    )}
+
+                    <div className="venta-vendedor">
+                      <strong>Vendedor:</strong> {venta.vendedor?.nombre}
+                    </div>
+                  </div>
+
+                  <div className="venta-card-footer">
+                    <span className="venta-total">{formatearPrecio(venta.total)}</span>
+                    <button className="btn-ver-detalle">Ver detalle →</button>
                   </div>
                 </div>
+              ))}
+            </div>
 
-                <div className="venta-card-footer">
-                  <span className="venta-total">{formatearPrecio(venta.total)}</span>
-                  <button className="btn-ver-detalle">Ver detalle →</button>
+            {/* Paginación */}
+            {totalPaginas > 1 && (
+              <div className="paginacion">
+                <button 
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                  className="btn-paginacion"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="numeros-pagina">
+                  {[...Array(totalPaginas)].map((_, index) => {
+                    const numeroPagina = index + 1;
+                    // Mostrar solo algunas páginas para no saturar
+                    if (
+                      numeroPagina === 1 ||
+                      numeroPagina === totalPaginas ||
+                      (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
+                    ) {
+                      return (
+                        <button
+                          key={numeroPagina}
+                          onClick={() => cambiarPagina(numeroPagina)}
+                          className={`btn-numero ${paginaActual === numeroPagina ? 'activo' : ''}`}
+                        >
+                          {numeroPagina}
+                        </button>
+                      );
+                    } else if (
+                      numeroPagina === paginaActual - 2 ||
+                      numeroPagina === paginaActual + 2
+                    ) {
+                      return <span key={numeroPagina} className="puntos">...</span>;
+                    }
+                    return null;
+                  })}
                 </div>
+
+                <button 
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                  className="btn-paginacion"
+                >
+                  Siguiente →
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Modal de detalle */}
+      {/* Modal de detalle (sin cambios) */}
       {ventaDetalle && (
         <div className="modal-overlay" onClick={cerrarDetalle}>
           <div className="modal modal-detalle" onClick={(e) => e.stopPropagation()}>

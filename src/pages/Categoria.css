@@ -323,3 +323,142 @@
     height: 300px;
   }
 }
+/* 🆕 AGREGAR AL FINAL DEL Categoria.css EXISTENTE */
+
+/* Info de productos */
+.total-productos {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin: 0.5rem 0 0 0;
+}
+
+.info-paginacion {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+.btn-paginacion {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-verde);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.btn-paginacion:hover:not(:disabled) {
+  background: var(--color-verde-oscuro);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+}
+
+.btn-paginacion:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.numeros-pagina {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-numero {
+  width: 45px;
+  height: 45px;
+  background: white;
+  border: 2px solid var(--color-verde);
+  color: var(--color-verde);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.btn-numero:hover {
+  background: var(--color-verde);
+  color: white;
+  transform: scale(1.1);
+}
+
+.btn-numero.activo {
+  background: var(--color-verde);
+  color: white;
+  box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+  transform: scale(1.05);
+}
+
+.puntos {
+  color: var(--color-verde);
+  font-weight: 700;
+  padding: 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+/* Responsive paginación */
+@media (max-width: 768px) {
+  .paginacion {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.5rem 0;
+  }
+
+  .btn-paginacion {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-numero {
+    width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+
+  .numeros-pagina {
+    gap: 0.35rem;
+  }
+
+  .info-paginacion {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-numero {
+    width: 35px;
+    height: 35px;
+    font-size: 0.85rem;
+  }
+
+  .btn-paginacion {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .puntos {
+    font-size: 1rem;
+    padding: 0 0.25rem;
+  }
+}

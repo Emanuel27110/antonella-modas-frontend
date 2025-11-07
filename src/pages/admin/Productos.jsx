@@ -13,6 +13,7 @@ import './Productos.css';
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -20,11 +21,21 @@ const Productos = () => {
   const [productoEditando, setProductoEditando] = useState(null);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   
+  // Filtros
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroCategoria, setFiltroCategoria] = useState('todos');
+  const [filtroStock, setFiltroStock] = useState('todos');
+  const [filtroVisibilidad, setFiltroVisibilidad] = useState('todos');
+  
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const productosPorPagina = 12;
+  
   const [formData, setFormData] = useState({
     nombre: '',
     precio: '',
-    stock: '', // 🆕 NUEVO
-    stockMinimo: 5, // 🆕 NUEVO
+    stock: '',
+    stockMinimo: 5,
     talles: '',
     imagen: '',
     descripcion: '',
@@ -39,6 +50,11 @@ const Productos = () => {
     cargarDatos();
   }, []);
 
+  useEffect(() => {
+    filtrarProductos();
+    setPaginaActual(1);
+  }, [productos, busqueda, filtroCategoria, filtroStock, filtroVisibilidad]);
+
   const cargarDatos = async () => {
     try {
       const [productosRes, categoriasRes] = await Promise.all([
@@ -46,6 +62,7 @@ const Productos = () => {
         getCategorias()
       ]);
       setProductos(productosRes.data);
+      setProductosFiltrados(productosRes.data);
       setCategorias(categoriasRes.data);
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -53,6 +70,49 @@ const Productos = () => {
     } finally {
       setCargando(false);
     }
+  };
+
+  const filtrarProductos = () => {
+    let filtrados = [...productos];
+
+    // Filtrar por búsqueda
+    if (busqueda.trim() !== '') {
+      filtrados = filtrados.filter(p =>
+        p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        p.descripcion?.toLowerCase().includes(busqueda.toLowerCase())
+      );
+    }
+
+    // Filtrar por categoría
+    if (filtroCategoria !== 'todos') {
+      filtrados = filtrados.filter(p => p.categoria?._id === filtroCategoria);
+    }
+
+    // Filtrar por stock
+    if (filtroStock === 'bajo') {
+      filtrados = filtrados.filter(p => p.stock <= p.stockMinimo);
+    } else if (filtroStock === 'agotado') {
+      filtrados = filtrados.filter(p => p.stock === 0);
+    }
+
+    // Filtrar por visibilidad
+    if (filtroVisibilidad !== 'todos') {
+      const esVisible = filtroVisibilidad === 'visible';
+      filtrados = filtrados.filter(p => p.visible === esVisible);
+    }
+
+    setProductosFiltrados(filtrados);
+  };
+
+  // Calcular productos de la página actual
+  const indiceUltimo = paginaActual * productosPorPagina;
+  const indicePrimero = indiceUltimo - productosPorPagina;
+  const productosActuales = productosFiltrados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const mostrarMensaje = (tipo, texto) => {
@@ -67,8 +127,8 @@ const Productos = () => {
       setFormData({
         nombre: producto.nombre,
         precio: producto.precio,
-        stock: producto.stock || 0, // 🆕 NUEVO
-        stockMinimo: producto.stockMinimo || 5, // 🆕 NUEVO
+        stock: producto.stock || 0,
+        stockMinimo: producto.stockMinimo || 5,
         talles: producto.talles?.join(', ') || '',
         imagen: producto.imagen || '',
         descripcion: producto.descripcion || '',
@@ -81,8 +141,8 @@ const Productos = () => {
       setFormData({
         nombre: '',
         precio: '',
-        stock: 0, // 🆕 NUEVO
-        stockMinimo: 5, // 🆕 NUEVO
+        stock: 0,
+        stockMinimo: 5,
         talles: '',
         imagen: '',
         descripcion: '',
@@ -133,7 +193,6 @@ const Productos = () => {
     try {
       let urlImagen = formData.imagen;
 
-      // Subir imagen si se seleccionó una nueva
       if (imagenSeleccionada) {
         setSubiendoImagen(true);
         const formDataImagen = new FormData();
@@ -144,12 +203,11 @@ const Productos = () => {
         setSubiendoImagen(false);
       }
 
-      // Preparar datos del producto
       const datosProducto = {
         nombre: formData.nombre,
         precio: Number(formData.precio),
-        stock: Number(formData.stock), // 🆕 NUEVO
-        stockMinimo: Number(formData.stockMinimo), // 🆕 NUEVO
+        stock: Number(formData.stock),
+        stockMinimo: Number(formData.stockMinimo),
         talles: formData.talles ? formData.talles.split(',').map(t => t.trim()) : [],
         imagen: urlImagen,
         descripcion: formData.descripcion,
@@ -218,7 +276,7 @@ const Productos = () => {
             <Link to="/admin/dashboard" className="btn-volver">
               ← Dashboard
             </Link>
-                      <h1>🛍️ Gestión de Productos</h1>
+            <h1>🛍️ Gestión de Productos</h1>
             <button onClick={() => abrirModal()} className="btn-primary">
               + Nuevo Producto
             </button>
@@ -233,77 +291,172 @@ const Productos = () => {
           </div>
         )}
 
-        {productos.length === 0 ? (
+        {/* Filtros */}
+        <div className="filtros-productos">
+          <div className="filtro-busqueda">
+            <input
+              type="text"
+              placeholder="🔍 Buscar producto..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="input-busqueda"
+            />
+          </div>
+
+          <div className="filtros-row">
+            <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}>
+              <option value="todos">Todas las categorías</option>
+              {categorias.map(cat => (
+                <option key={cat._id} value={cat._id}>{cat.nombre}</option>
+              ))}
+            </select>
+
+            <select value={filtroStock} onChange={(e) => setFiltroStock(e.target.value)}>
+              <option value="todos">Todo el stock</option>
+              <option value="bajo">Stock bajo</option>
+              <option value="agotado">Agotado</option>
+            </select>
+
+            <select value={filtroVisibilidad} onChange={(e) => setFiltroVisibilidad(e.target.value)}>
+              <option value="todos">Todos</option>
+              <option value="visible">Visibles</option>
+              <option value="oculto">Ocultos</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Resumen */}
+        <div className="resumen-productos">
+          <div className="resumen-card">
+            <span className="resumen-label">Total productos:</span>
+            <span className="resumen-valor">{productosFiltrados.length}</span>
+          </div>
+          {totalPaginas > 1 && (
+            <div className="resumen-card">
+              <span className="resumen-label">Página:</span>
+              <span className="resumen-valor">{paginaActual} / {totalPaginas}</span>
+            </div>
+          )}
+        </div>
+
+        {productosFiltrados.length === 0 ? (
           <div className="empty-state">
-            <p>📦 No hay productos creados</p>
+            <p>📦 No hay productos que coincidan con los filtros</p>
             <button onClick={() => abrirModal()} className="btn-primary">
-              Crear primer producto
+              Crear nuevo producto
             </button>
           </div>
         ) : (
-          <div className="productos-grid-admin">
-            {productos.map((producto) => (
-              <div key={producto._id} className="producto-card-admin">
-                <div className="producto-imagen-admin">
-                  {producto.imagen ? (
-                    <img src={producto.imagen} alt={producto.nombre} />
-                  ) : (
-                    <div className="sin-imagen">📷</div>
-                  )}
-                  {!producto.visible && (
-                    <span className="badge-oculto">Oculto</span>
-                  )}
-                  {/* 🆕 NUEVO: Badge de stock bajo */}
-                  {producto.stock <= producto.stockMinimo && (
-                    <span className="badge-stock-bajo">
-                      {producto.stock === 0 ? 'Sin stock' : 'Stock bajo'}
-                    </span>
-                  )}
-                </div>
-
-                <div className="producto-info-admin">
-                  <h3>{producto.nombre}</h3>
-                  <p className="producto-categoria">{producto.categoria?.nombre}</p>
-                  <p className="producto-precio">{formatearPrecio(producto.precio)}</p>
-                  
-                  {/* 🆕 NUEVO: Mostrar stock */}
-                  <div className="producto-stock">
-                    <span className={`stock-badge ${producto.stock === 0 ? 'stock-agotado' : producto.stock <= producto.stockMinimo ? 'stock-bajo' : 'stock-ok'}`}>
-                      📦 Stock: {producto.stock}
-                    </span>
+          <>
+            <div className="productos-grid-admin">
+              {productosActuales.map((producto) => (
+                <div key={producto._id} className="producto-card-admin">
+                  <div className="producto-imagen-admin">
+                    {producto.imagen ? (
+                      <img src={producto.imagen} alt={producto.nombre} />
+                    ) : (
+                      <div className="sin-imagen">📷</div>
+                    )}
+                    {!producto.visible && (
+                      <span className="badge-oculto">Oculto</span>
+                    )}
+                    {producto.stock <= producto.stockMinimo && (
+                      <span className="badge-stock-bajo">
+                        {producto.stock === 0 ? 'Sin stock' : 'Stock bajo'}
+                      </span>
+                    )}
                   </div>
 
-                  {producto.talles?.length > 0 && (
-                    <p className="producto-talles">Talles: {producto.talles.join(', ')}</p>
-                  )}
+                  <div className="producto-info-admin">
+                    <h3>{producto.nombre}</h3>
+                    <p className="producto-categoria">{producto.categoria?.nombre}</p>
+                    <p className="producto-precio">{formatearPrecio(producto.precio)}</p>
+                    
+                    <div className="producto-stock">
+                      <span className={`stock-badge ${producto.stock === 0 ? 'stock-agotado' : producto.stock <= producto.stockMinimo ? 'stock-bajo' : 'stock-ok'}`}>
+                        📦 Stock: {producto.stock}
+                      </span>
+                    </div>
 
-                  <div className="producto-acciones">
-                    <button onClick={() => abrirModal(producto)} className="btn-editar-sm">
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => handleCambiarVisibilidad(producto._id)}
-                      className={producto.visible ? 'btn-ocultar-sm' : 'btn-mostrar-sm'}
-                      title={producto.visible ? 'Ocultar' : 'Mostrar'}
-                    >
-                      {producto.visible ? '👁️' : '🙈'}
-                    </button>
-                    <button
-                      onClick={() => handleEliminar(producto._id, producto.nombre)}
-                      className="btn-eliminar-sm"
-                    >
-                      🗑️
-                    </button>
+                    {producto.talles?.length > 0 && (
+                      <p className="producto-talles">Talles: {producto.talles.join(', ')}</p>
+                    )}
+
+                    <div className="producto-acciones">
+                      <button onClick={() => abrirModal(producto)} className="btn-editar-sm">
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => handleCambiarVisibilidad(producto._id)}
+                        className={producto.visible ? 'btn-ocultar-sm' : 'btn-mostrar-sm'}
+                        title={producto.visible ? 'Ocultar' : 'Mostrar'}
+                      >
+                        {producto.visible ? '👁️' : '🙈'}
+                      </button>
+                      <button
+                        onClick={() => handleEliminar(producto._id, producto.nombre)}
+                        className="btn-eliminar-sm"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Paginación */}
+            {totalPaginas > 1 && (
+              <div className="paginacion">
+                <button 
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                  className="btn-paginacion"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="numeros-pagina">
+                  {[...Array(totalPaginas)].map((_, index) => {
+                    const numeroPagina = index + 1;
+                    if (
+                      numeroPagina === 1 ||
+                      numeroPagina === totalPaginas ||
+                      (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
+                    ) {
+                      return (
+                        <button
+                          key={numeroPagina}
+                          onClick={() => cambiarPagina(numeroPagina)}
+                          className={`btn-numero ${paginaActual === numeroPagina ? 'activo' : ''}`}
+                        >
+                          {numeroPagina}
+                        </button>
+                      );
+                    } else if (
+                      numeroPagina === paginaActual - 2 ||
+                      numeroPagina === paginaActual + 2
+                    ) {
+                      return <span key={numeroPagina} className="puntos">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+
+                <button 
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                  className="btn-paginacion"
+                >
+                  Siguiente →
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Modal (continuará en el siguiente mensaje por límite de caracteres) */}
-      {/* Modal de crear/editar producto */}
+      {/* Modal */}
       {modalAbierto && (
         <div className="modal-overlay" onClick={cerrarModal}>
           <div className="modal modal-grande" onClick={(e) => e.stopPropagation()}>
@@ -361,7 +514,6 @@ const Productos = () => {
                   />
                 </div>
 
-                {/* 🆕 NUEVO: Campo de stock */}
                 <div className="form-group">
                   <label htmlFor="stock">Stock *</label>
                   <input
@@ -376,7 +528,6 @@ const Productos = () => {
                   />
                 </div>
 
-                {/* 🆕 NUEVO: Stock mínimo */}
                 <div className="form-group">
                   <label htmlFor="stockMinimo">Stock Mínimo (Alerta)</label>
                   <input
