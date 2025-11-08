@@ -260,3 +260,119 @@
     text-align: center;
   }
 }
+/* 🆕 AGREGAR AL FINAL DEL Home.css EXISTENTE */
+
+/* Info de categorías */
+.info-categorias {
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Paginación Home */
+.paginacion-home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 3rem 0;
+  padding: 2rem 0;
+}
+
+.paginacion-home .btn-paginacion {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-verde);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.paginacion-home .btn-paginacion:hover:not(:disabled) {
+  background: var(--color-verde-oscuro);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+}
+
+.paginacion-home .btn-paginacion:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.paginacion-home .numeros-pagina {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.paginacion-home .btn-numero {
+  width: 45px;
+  height: 45px;
+  background: white;
+  border: 2px solid var(--color-verde);
+  color: var(--color-verde);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.paginacion-home .btn-numero:hover {
+  background: var(--color-verde);
+  color: white;
+  transform: scale(1.1);
+}
+
+.paginacion-home .btn-numero.activo {
+  background: var(--color-verde);
+  color: white;
+  box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .paginacion-home {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  .paginacion-home .btn-paginacion {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .paginacion-home .btn-numero {
+    width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+
+  .info-categorias {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .paginacion-home .btn-numero {
+    width: 35px;
+    height: 35px;
+    font-size: 0.85rem;
+  }
+
+  .paginacion-home .btn-paginacion {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}

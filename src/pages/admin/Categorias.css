@@ -519,3 +519,147 @@
 .modal::-webkit-scrollbar-thumb:hover {
   background: var(--color-verde-oscuro);
 }
+/* 🆕 AGREGAR AL FINAL DEL Categorias.css EXISTENTE */
+
+/* Filtros y búsqueda */
+.filtros-container {
+  margin-bottom: 2rem;
+}
+
+.filtro-busqueda {
+  width: 100%;
+}
+
+.input-busqueda {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input-busqueda:focus {
+  outline: none;
+  border-color: var(--color-verde);
+}
+
+/* Resumen */
+.resumen-categorias {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.resumen-categorias .resumen-card {
+  flex: 1;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resumen-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.resumen-valor {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-verde);
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding: 1.5rem 0;
+}
+
+.btn-paginacion {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-verde);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-paginacion:hover:not(:disabled) {
+  background: var(--color-verde-oscuro);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+}
+
+.btn-paginacion:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.numeros-pagina {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-numero {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 2px solid var(--color-verde);
+  color: var(--color-verde);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-numero:hover {
+  background: var(--color-verde);
+  color: white;
+  transform: scale(1.1);
+}
+
+.btn-numero.activo {
+  background: var(--color-verde);
+  color: white;
+  box-shadow: 0 4px 12px rgba(44, 95, 45, 0.3);
+}
+
+.puntos {
+  color: var(--color-verde);
+  font-weight: 700;
+  padding: 0 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .paginacion {
+    flex-wrap: wrap;
+  }
+
+  .btn-paginacion {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-numero {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+
+  .resumen-categorias {
+    flex-direction: column;
+  }
+}

@@ -7,6 +7,10 @@ const Home = () => {
   const [categorias, setCategorias] = useState([]);
   const [cargando, setCargando] = useState(true);
 
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const categoriasPorPagina = 9; // 9 se ve perfecto en grid 3x3
+
   useEffect(() => {
     cargarCategorias();
   }, []);
@@ -20,6 +24,17 @@ const Home = () => {
     } finally {
       setCargando(false);
     }
+  };
+
+  // Calcular categorías de la página actual
+  const indiceUltimo = paginaActual * categoriasPorPagina;
+  const indicePrimero = indiceUltimo - categoriasPorPagina;
+  const categoriasActuales = categorias.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(categorias.length / categoriasPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
   if (cargando) {
@@ -42,21 +57,66 @@ const Home = () => {
             <p>📦 No hay categorías disponibles</p>
           </div>
         ) : (
-          <div className="categorias-grid">
-            {categorias.map((categoria) => (
-              <Link
-                key={categoria._id}
-                to={`/categoria/${categoria._id}`}
-                className="categoria-card"
-              >
-                <div className="categoria-icon">👗</div>
-                <h2 className="categoria-nombre">{categoria.nombre}</h2>
-                {categoria.descripcion && (
-                  <p className="categoria-descripcion">{categoria.descripcion}</p>
-                )}
-              </Link>
-            ))}
-          </div>
+          <>
+            {/* Info de categorías */}
+            {totalPaginas > 1 && (
+              <div className="info-categorias">
+                Mostrando {indicePrimero + 1} - {Math.min(indiceUltimo, categorias.length)} de {categorias.length} categorías
+              </div>
+            )}
+
+            <div className="categorias-grid">
+              {categoriasActuales.map((categoria) => (
+                <Link
+                  key={categoria._id}
+                  to={`/categoria/${categoria._id}`}
+                  className="categoria-card"
+                >
+                  <div className="categoria-icon">👗</div>
+                  <h2 className="categoria-nombre">{categoria.nombre}</h2>
+                  {categoria.descripcion && (
+                    <p className="categoria-descripcion">{categoria.descripcion}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
+
+            {/* Paginación */}
+            {totalPaginas > 1 && (
+              <div className="paginacion-home">
+                <button 
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                  className="btn-paginacion"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="numeros-pagina">
+                  {[...Array(totalPaginas)].map((_, index) => {
+                    const numeroPagina = index + 1;
+                    return (
+                      <button
+                        key={numeroPagina}
+                        onClick={() => cambiarPagina(numeroPagina)}
+                        className={`btn-numero ${paginaActual === numeroPagina ? 'activo' : ''}`}
+                      >
+                        {numeroPagina}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button 
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                  className="btn-paginacion"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

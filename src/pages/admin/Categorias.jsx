@@ -10,10 +10,17 @@ import './Categorias.css';
 
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
+  const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [categoriaEditando, setCategoriaEditando] = useState(null);
+  const [busqueda, setBusqueda] = useState('');
+  
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const categoriasPorPagina = 12;
+  
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -25,16 +32,46 @@ const Categorias = () => {
     cargarCategorias();
   }, []);
 
+  useEffect(() => {
+    filtrarCategorias();
+    setPaginaActual(1);
+  }, [categorias, busqueda]);
+
   const cargarCategorias = async () => {
     try {
       const response = await getCategorias();
       setCategorias(response.data);
+      setCategoriasFiltradas(response.data);
     } catch (error) {
       console.error('Error al cargar categorías:', error);
       mostrarMensaje('error', 'Error al cargar categorías');
     } finally {
       setCargando(false);
     }
+  };
+
+  const filtrarCategorias = () => {
+    let filtradas = [...categorias];
+
+    if (busqueda.trim() !== '') {
+      filtradas = filtradas.filter(c =>
+        c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        c.descripcion?.toLowerCase().includes(busqueda.toLowerCase())
+      );
+    }
+
+    setCategoriasFiltradas(filtradas);
+  };
+
+  // Calcular categorías de la página actual
+  const indiceUltimo = paginaActual * categoriasPorPagina;
+  const indicePrimero = indiceUltimo - categoriasPorPagina;
+  const categoriasActuales = categoriasFiltradas.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(categoriasFiltradas.length / categoriasPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const mostrarMensaje = (tipo, texto) => {
@@ -111,22 +148,19 @@ const Categorias = () => {
 
   return (
     <div className="admin-page">
-<header className="admin-header">
-  <div className="header-content">
-    <div className="header-top">
-      <Link to="/admin/dashboard" className="btn-volver">
-        ← Dashboard
-      </Link>
-      <div className="header-actions">
+      <header className="admin-header">
+        <div className="header-content">
+          <div className="header-actions">
+            <Link to="/admin/dashboard" className="btn-volver">
+              ← Dashboard
+            </Link>
             <h1>📁 Gestión de Categorías</h1>
-        <button onClick={() => abrirModal()} className="btn-primary">
-          + Nueva Categoría
-        </button>
-      </div>
-    </div>
-
-  </div>
-</header>
+            <button onClick={() => abrirModal()} className="btn-primary">
+              + Nueva Categoría
+            </button>
+          </div>
+        </div>
+      </header>
 
       <div className="admin-container">
         {mensaje.texto && (
@@ -135,51 +169,128 @@ const Categorias = () => {
           </div>
         )}
 
-        {categorias.length === 0 ? (
+        {/* Búsqueda */}
+        <div className="filtros-container">
+          <div className="filtro-busqueda">
+            <input
+              type="text"
+              placeholder="🔍 Buscar categoría..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="input-busqueda"
+            />
+          </div>
+        </div>
+
+        {/* Resumen */}
+        <div className="resumen-categorias">
+          <div className="resumen-card">
+            <span className="resumen-label">Total categorías:</span>
+            <span className="resumen-valor">{categoriasFiltradas.length}</span>
+          </div>
+          {totalPaginas > 1 && (
+            <div className="resumen-card">
+              <span className="resumen-label">Página:</span>
+              <span className="resumen-valor">{paginaActual} / {totalPaginas}</span>
+            </div>
+          )}
+        </div>
+
+        {categoriasFiltradas.length === 0 ? (
           <div className="empty-state">
-            <p>📦 No hay categorías creadas</p>
+            <p>📦 No hay categorías que coincidan con la búsqueda</p>
             <button onClick={() => abrirModal()} className="btn-primary">
-              Crear primera categoría
+              Crear nueva categoría
             </button>
           </div>
         ) : (
-          <div className="tabla-container">
-            <table className="tabla">
-              <thead>
-                <tr>
-                  <th>Orden</th>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categorias.map((categoria) => (
-                  <tr key={categoria._id}>
-                    <td>{categoria.orden}</td>
-                    <td><strong>{categoria.nombre}</strong></td>
-                    <td>{categoria.descripcion || '-'}</td>
-                    <td>
-                      <div className="acciones">
-                        <button
-                          onClick={() => abrirModal(categoria)}
-                          className="btn-editar"
-                        >
-                          ✏️ Editar
-                        </button>
-                        <button
-                          onClick={() => handleEliminar(categoria._id, categoria.nombre)}
-                          className="btn-eliminar"
-                        >
-                          🗑️ Eliminar
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="tabla-container">
+              <table className="tabla">
+                <thead>
+                  <tr>
+                    <th>Orden</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {categoriasActuales.map((categoria) => (
+                    <tr key={categoria._id}>
+                      <td>{categoria.orden}</td>
+                      <td><strong>{categoria.nombre}</strong></td>
+                      <td>{categoria.descripcion || '-'}</td>
+                      <td>
+                        <div className="acciones">
+                          <button
+                            onClick={() => abrirModal(categoria)}
+                            className="btn-editar"
+                          >
+                            ✏️ Editar
+                          </button>
+                          <button
+                            onClick={() => handleEliminar(categoria._id, categoria.nombre)}
+                            className="btn-eliminar"
+                          >
+                            🗑️ Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginación */}
+            {totalPaginas > 1 && (
+              <div className="paginacion">
+                <button 
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                  className="btn-paginacion"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="numeros-pagina">
+                  {[...Array(totalPaginas)].map((_, index) => {
+                    const numeroPagina = index + 1;
+                    if (
+                      numeroPagina === 1 ||
+                      numeroPagina === totalPaginas ||
+                      (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
+                    ) {
+                      return (
+                        <button
+                          key={numeroPagina}
+                          onClick={() => cambiarPagina(numeroPagina)}
+                          className={`btn-numero ${paginaActual === numeroPagina ? 'activo' : ''}`}
+                        >
+                          {numeroPagina}
+                        </button>
+                      );
+                    } else if (
+                      numeroPagina === paginaActual - 2 ||
+                      numeroPagina === paginaActual + 2
+                    ) {
+                      return <span key={numeroPagina} className="puntos">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+
+                <button 
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                  className="btn-paginacion"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
